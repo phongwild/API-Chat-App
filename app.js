@@ -41,12 +41,14 @@ app.use((req, res, next) => {
     next();
 });
 
+const initSocket = require('./controllers/messageControllers');
 // app.use((req, res, next) => {
 //     if (req.headers['x-forwarded-proto'] !== 'https') {
 //         return res.redirect(`https://${req.headers.host}${req.url}`);
 //     }
 //     next();
 // });
+initSocket(http);
 
 
 // Router
