@@ -1,0 +1,21 @@
+# Ignore tất cả các file trong thư mục uploads
+uploads/**
+
+# Nhưng giữ lại thư mục uploads và các thư mục con trống
+!uploads/
+!uploads/**/
+
+# Giữ lại các thư mục con cụ thể và nội dung bên trong chúng
+!uploads/audios/**
+!uploads/documents/**
+!uploads/images/**
+!uploads/videos/**
+
+# Ignore các thư mục và file khác
+.env
+node_modules
+.vercel
+service/firebase-service.json
+
+# Local Netlify folder
+.netlify
