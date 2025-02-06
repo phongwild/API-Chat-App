@@ -6,8 +6,8 @@ const Mailgen = require('mailgen');
 const sendOtp = require('../utils/sendOTP');
 const { default: mongoose } = require('mongoose');
 const { sendFcmNotification } = require('./notificationControllers');
+const otpModel = require('../models/otpModel');
 
-let otpStorage = {}; //Dùng để lưu trữ OTP tạm thời
 let otpRateLimit = {}; // Lưu số lần gửi OTP
 const OTP_THROTTLE_TIME = 30 * 1000; // 30 giây
 const OTP_RATE_LIMIT = 5; // 3 lần gửi trong 1 giờ
@@ -93,9 +93,12 @@ module.exports.register = async (req, res) => {
 
     // Tạo mã OTP 6 số
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Lưu OTP tạm thời (timeout trong 5 phút)
-    otpStorage[email] = { otp, username, email, password, expiresAt: currentTime + 5 * 60 * 1000 };
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // Hết hạn sau 5 phút
+    await otpModel.findOneAndUpdate(
+        { email, username, password },
+        { otp, expiresAt },
+        { upsert: true, new: true }
+    )
 
     // Cập nhật rate limit
     otpRateLimit[email] = otpRateLimit[email] || { count: 0, lastRequestTime: 0 };
@@ -122,7 +125,7 @@ module.exports.verifyOtp = async (req, res) => {
     email = email.toLowerCase();
 
     // Kiểm tra email có trong OTP storage không
-    const userOtp = otpStorage[email];
+    const userOtp = await otpModel.findOne({ email });
     if (!userOtp) {
         return res.status(400).json('Invalid or expired OTP');
     }
@@ -134,7 +137,7 @@ module.exports.verifyOtp = async (req, res) => {
 
     // Kiểm tra OTP đã hết hạn chưa
     if (userOtp.expiresAt < Date.now()) {
-        delete otpStorage[email];
+        await otpModel.deleteOne({ email });
         return res.status(400).json('OTP expired. Please request a new one.');
     }
 
@@ -147,7 +150,7 @@ module.exports.verifyOtp = async (req, res) => {
     await User.create({ username: userOtp.username, email: userOtp.email, password: hash, avatar: avatar });
 
     // Xóa OTP khỏi storage và rate limit
-    delete otpStorage[email];
+    await otpModel.deleteOne({ email });
     delete otpRateLimit[email];
 
     res.status(201).json('Registration successful');
