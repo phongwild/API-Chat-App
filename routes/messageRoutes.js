@@ -9,9 +9,5 @@ router.route('/sendmessage')
 router.route('/getmessage')
     .get(catchAsync(message.getMessage));
 
-router.route('/sendmedia')
-    .post(message.sendMedia);
-
-
 
 module.exports = router;

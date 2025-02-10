@@ -13,11 +13,6 @@ const OTP_THROTTLE_TIME = 30 * 1000; // 30 giây
 const OTP_RATE_LIMIT = 5; // 3 lần gửi trong 1 giờ
 const OTP_RATE_LIMIT_TIME = 60 * 60 * 1000; // 1 giờ
 
-module.exports.getAllUser = async (req, res) => {
-    const users = await User.find();
-    res.json(users);
-}
-
 module.exports.getUsers = async (req, res) => {
     try {
         const { search, uid } = req.query;
@@ -145,7 +140,7 @@ module.exports.verifyOtp = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(userOtp.password, salt);
 
-    const avatar = `${req.protocol}://${req.get('host')}/uploads/images/1737081602770-5b127fc20873.jpg`;
+    const avatar = `${req.protocol}://${req.get('host')}/uploads/images/1738846104671-f3220a80b7d7.jpg`;
 
     await User.create({ username: userOtp.username, email: userOtp.email, password: hash, avatar: avatar });
 

@@ -12,12 +12,12 @@ mongoose.connect(process.env.DB_URL, {
 
 const seedUsers = async () => {
     try {
-        await User.deleteMany(); // Xóa toàn bộ dữ liệu cũ (nếu có)
+        // await User.deleteMany(); // Xóa toàn bộ dữ liệu cũ (nếu có)
 
         const users = Array.from({ length: 50 }, (_, i) => ({
             username: `user${i + 1}`,
             email: `user${i + 1}@gmail.com`,
-            avatar: `http://10.62.4.129:3000/uploads/images/1737081602770-5b127fc20873.jpg`,
+            avatar: `https://api-chat-app-tqym.onrender.com/uploads/images/1737081602770-5b127fc20873.jpg`,
             password: "$2a$10$yVqGg1Xb0Qg6m2HKYGGXtenJAHqilSXO99b4QBAz.2pQWRUiUktKW",
             friends: [],
             request_friends: [],
