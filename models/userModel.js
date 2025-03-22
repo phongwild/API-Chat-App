@@ -22,7 +22,7 @@ const userSchema = new schema({
 
     avatar: {
         type: String,
-        default: ''
+        default: 'https://mangadex.org/img/avatar.png'
     },
 
     password: {

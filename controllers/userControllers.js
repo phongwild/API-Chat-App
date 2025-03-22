@@ -140,9 +140,7 @@ module.exports.verifyOtp = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(userOtp.password, salt);
 
-    const avatar = `${req.protocol}://${req.get('host')}/uploads/images/1738846104671-f3220a80b7d7.jpg`;
-
-    await User.create({ username: userOtp.username, email: userOtp.email, password: hash, avatar: avatar });
+    await User.create({ username: userOtp.username, email: userOtp.email, password: hash });
 
     // Xóa OTP khỏi storage và rate limit
     await otpModel.deleteOne({ email });
